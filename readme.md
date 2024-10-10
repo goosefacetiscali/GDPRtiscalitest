@@ -70,7 +70,7 @@ The MVP could be extended to support other file formats, primarily JSON and Parq
 - **Testing Tools**: Pytest
 - **Deployment**: AWS Lambda
 
-## Usage
+# Usage
 
 Although the tool is intended to function as a library, demonstration of its use can be done through command-line invocation.
 
@@ -86,36 +86,88 @@ Amazon Web Services (AWS) offers a free tier that allows you to access various s
 
 2. Click on the **Create a Free Account** button located in the center of the page.
 
-## Cloning the Repository
+# Forking and Cloning the Repository
 
-Before setting up AWS access keys, you need to clone the repository to your local machine. Follow these steps:
-
-1. **Open Your Terminal or Command Prompt:**
-   - On your local machine, open your terminal (Linux/Mac) or command prompt (Windows).
-
-2. **Clone the Repository:**
-   - Use the following command to clone the repository:
-     ```bash
-     git clone https://github.com/A-Waterhouse/GDPR
-     ```
+Before setting up AWS, you need to fork and clone the repository to your local machine. Follow these steps:
 
 
-3. **Navigate to the Cloned Repository:**
-   - After cloning, change into the directory of the cloned repository:
+## Step 1: Fork the GDPR Repository
 
-4. run `make requirements` in the terminal.
+1. **Log in to GitHub**
+   - Go to [GitHub](https://github.com) and log in to your account.
 
-After cloning the repository, you can proceed to set up AWS access keys in GitHub.
+2. **Navigate to the GDPR Repository**
+   - Visit the GDPR repository by going to this URL: [https://github.com/A-Waterhouse/GDPR](https://github.com/A-Waterhouse/GDPR).
+
+3. **Fork the Repository**
+   - On the repository page, click the "Fork" button in the top-right corner and the click `Create fork`. This will create a copy of the `GDPR` repository under your GitHub account.
+
+## Step 2: Clone the Forked GDPR Repository
+
+1. **Go to Your Forked GDPR Repository**
+   - After forking, navigate to your forked copy of the repository, which will now be under your GitHub account.
+
+2. **Copy the Repository URL**
+   - On your forked repository page, click the green "Code" button, and copy the HTTPS or SSH URL.
+     - **HTTPS URL**: `https://github.com/your-username/GDPR.git`
+     - **SSH URL**: `git@github.com:your-username/GDPR.git`
+
+3. **Open a Terminal (Command Line)**
+   - On your local machine, open a terminal or command prompt.
+
+4. **Run the Clone Command**
+   - Use the `git clone` command followed by the URL you copied. For example, if you’re using HTTPS:
+
+   ```bash
+   git clone https://github.com/your-username/GDPR.git
+   ```
+
+   Replace `your-username` with your GitHub username.
+
+5. **Navigate into the Cloned Directory**
+   - After cloning, navigate into the repository’s folder using the `cd` command:
+
+   ```bash
+   cd GDPR
+   ```
+
+# Local machine setup
+
+run `make requirements` in the terminal.
+
+
+## Setting up AWS CLI
+
+Follow the instructions <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">here</a> to install the AWS CLI.
+
+## logging in to AWS using the CLI
+
+Run the command `aws configure` 
+
+You will be prompted to enter your `AWS Access Key ID` which can be found in the security credentials 
+section of the AWS website under your username in the top right. 
+
+Select `Create Access Key` to create one and follow the instructions which follow.
+
+Click `Download .csv file` open it so you can view the ID and Key and save it locally to your PC, being sure
+to follow `Access key best practices`.
+
+enter the information from the downloaded .csv file `rootkey.csv` into the terminal following the prompts.
+
+the next 2 prompts should be `eu-west-2` for the `Default Region Name` and `json` for the 
+`Default output format`
+
 
 ## Setting Up AWS Access Keys in GitHub
 
 To enable the project to interact with AWS services, you need to configure AWS access keys in your GitHub repository. Follow these steps to set up the necessary secrets:
 
 1. **Navigate to the GDPR Repository:**
-   - Go to the GitHub website and open the repository.
+   - Go to the GitHub website and open the repository. 
+   - `github.com/your-username/GDPR.git`
 
 2. **Access Repository Settings:**
-   - Click on the `Settings` tab located in the upper right corner of your repository page.
+   - Click on the `Settings` tab located at the top of your repository page.
 
 3. **Select Secrets and Variables:**
    - On the left sidebar, click on `Secrets and variables`.
@@ -124,19 +176,13 @@ To enable the project to interact with AWS services, you need to configure AWS a
 4. **Add New Repository Secret:**
    - Click on the `New repository secret` button.
 
-5. **Create AWS Access Key:**
-   - If you haven’t done so already, go to the AWS Management Console.
-   - Navigate to the IAM (Identity and Access Management) service.
-   - Click on `Users`, select your user, and go to the `Security credentials` tab.
-   - Click on `Create access key` and note down your Access Key ID and Secret Access Key.
-
-6. **Enter the Secrets:**
+5. **Enter the Secrets:**
    - In the `Name` field, enter `AWS_ACCESS_KEY`.
-   - In the `Value` field, paste your Access Key ID from AWS.
+   - In the `Value` field, paste your Access Key ID from the `rootkey.csv` made earlier.
    - Click on `Add secret`.
    - Repeat the process to create another secret:
      - In the `Name` field, enter `AWS_SECRET`.
-     - In the `Value` field, paste your Secret Access Key from AWS.
+     - In the `Value` field, paste your Secret Access Key from the `rootkey.csv` made earlier.
      - Click on `Add secret`.
 
 Once these secrets are set up, your GitHub Actions workflows will have the necessary permissions to access AWS resources securely.
@@ -147,12 +193,10 @@ Once these secrets are set up, your GitHub Actions workflows will have the neces
 Before running Terraform, you need to create an S3 bucket to store the Terraform state. You can create the bucket using AWS CLI by running the following command:
 
 ```bash
-aws s3api create-bucket \
-    --bucket tf-state-gdpr-obfuscator-test \
-    --region <eu-west-2> \
-    --create-bucket-configuration LocationConstraint=<eu-west-2>
+aws s3 mb s3://tf-state-gdpr-obfuscator-test
 ```
-
+If you get error during bucket creation it may be because that bucket name is taken by another user, unique 
+bucket names must be used.
 
 **Note**:  
 - Ensure you have the correct permissions to create S3 buckets in your AWS account.  
@@ -160,28 +204,50 @@ aws s3api create-bucket \
 
 This can also be done manually on the AWS website.
 
-Once the bucket is created, ensure that the unique bucket name `tf-state-gdpr-obfuscator-test` is added to **line 10** of the file `terraform/data.tf` 
+## Code that must be changed
 
-and to **line 13** of the file `src/utils/processing2.py`
+Once the bucket is created, ensure that the unique bucket name, (eg. `tf-state-gdpr-obfuscator-test`) is added   
+- to **line 10** of the file `terraform/data.tf` 
+
+-  and to **line 13** of the file `src/utils/processing2.py`
+
+## Automatic Invocation
 
 
-use the tool provided `GDPR/src/data/create_data.py` to create a csv file named `dummy_data_large.csv` in `GDPR/src/data` by running the following command `make data`
+Use the tool provided `GDPR/src/data/create_data.py` to create a .csv file named `dummy_data_large.csv` in `GDPR/src/data` by running the following command 
 
-you should now push to github which will trigger actions and create the necessary infrastructure.
+```bash 
+make data
+```
 
-run the command `make upload` to upload your `dummy_data_large.csv` file to the correct bucket
+it is now essential that you push to github which will trigger actions and create the necessary infrastructure.
 
-to invoke the function run the command `make invoke`, the default PII fields to be obfuscated 
+run the command 
+```bash 
+make upload
+``` 
+to upload your `dummy_data_large.csv` file to the correct bucket
 
-are `["Name", "Email Address", "Sex", "DOB"]` these can be changed in **line 6** of `create_json_payload.py` in `GDPR/src/utils`
+to invoke the function run the command 
+```bash 
+make invoke
+```
+the default PII fields to be obfuscated 
+are `["Name", "Email Address", "Sex", "DOB"]` 
+   -  these can be changed in **line 6** of `create_json_payload.py` in `GDPR/src/utils`
 
-Alternatively you can use your own .csv file and upload it manually to the `input` bucket on the aws website or via the AWS CLI.
+## Manual Invocation
 
-Once this is done you can invoke the lambda function by uploading a .json file to the `invocation` bucket in the format mentioned above in the `Example input`.
+Alternatively you can use your own `.csv` file using the same format as the `Example Input CSV file` (as seen at start of this readme) and upload it manually to the `input` bucket (which was created automatically when `dummy_data_large.csv` was pushed to github) on the aws website or via the AWS CLI.
+
+Once this is done you can invoke the lambda function by uploading a `.json` file to the `invocation` bucket in the format mentioned above in the `Example input` (as seen at start of this readme).
+
+## Viewing result
 
 there will now be a file in the `processed` bucket with the same filename as the original file uploaded to the `input` bucket with the selected PII fields data replaced with `***`.
 
-the `***` can be replaced with any characters on **line 87** of the file `src/utils/processing2.py`
+   -  The `***` can be replaced with any characters on 
+   -  **line 87** of the file `src/utils/processing2.py`
 
 all data in the `input` and `invocation` buckets will be erased.
 
