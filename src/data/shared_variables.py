@@ -5,8 +5,7 @@ from botocore.exceptions import ClientError
 
 shared_variables = {}
 
-# Ask user for bucket name
-bucket_name = input("Please enter the bucket name: ")
+bucket_name = input("Please enter a unique bucket name to store the tfstate file: ")
 shared_variables["bucket"] = bucket_name
 
 def export_to_json():

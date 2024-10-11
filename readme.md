@@ -74,6 +74,8 @@ The MVP could be extended to support other file formats, primarily JSON and Parq
 
 Although the tool is intended to function as a library, demonstration of its use can be done through command-line invocation.
 
+This project is designed to run on Python 3.11.1
+
 # Opening a Free AWS Account
 
 Amazon Web Services (AWS) offers a free tier that allows you to access various services without incurring costs for a limited period. Follow these steps to create your free AWS account:
@@ -133,16 +135,24 @@ Before setting up AWS, you need to fork and clone the repository to your local m
 
 # Local machine setup
 
-run `make requirements` in the terminal.
+Run the command 
 
+```bash
+make requirements
+```
+in the terminal.
 
-## Setting up AWS CLI
+This will install all the libraries needed to run the project.
+
+# Setting up AWS CLI
 ### Step 1
 Run command 
 ```bash
 aws --version
 ```
-in the terminal to see if you already have AWS CLI installed. you should see something like this `aws-cli/2.15.8 Python/3.11.6 Linux/5.15.153.1-microsoft-standard-WSL2 exe/x86_64.ubuntu.22 prompt/off` in the terminal if you have it installed already.
+in the terminal
+
+This is to see if you already have AWS CLI installed. you should see something like this `aws-cli/2.15.8 Python/3.11.6 Linux/5.15.153.1-microsoft-standard-WSL2 exe/x86_64.ubuntu.22 prompt/off` in the terminal if you have it installed already.
 
 If not follow the instructions <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">here</a> to install the AWS CLI.
 
@@ -166,6 +176,8 @@ Select `Create Access Key` to create one and follow the instructions which follo
 Click `Download .csv file` open it so you can view the ID and Key and save it locally to your PC, being sure
 to follow `Access key best practices` which are displayed on the page.
 
+The keys will be used throughout the project and are essential.
+
 ### Step 3
 enter the information from the downloaded .csv file (`rootkey.csv`) into the terminal following the prompts.
 
@@ -173,6 +185,7 @@ the next 2 prompts should be -
    - `eu-west-2` for the `Default Region Name` 
    - `json` for the `Default output format`
 
+Now you have the access rights to control your AWS account from the terminal or within python scripts.
 
 ## Setting Up AWS Access Keys in GitHub
 
@@ -209,7 +222,7 @@ Once these secrets are set up, your GitHub Actions workflows will have the neces
 
 ### Creating an S3 Bucket for Terraform State Storage
 
-Before running Terraform, you need to create an S3 bucket to store the Terraform state. You can create the bucket using the terminal by running the following command:
+Before running Terraform, you need to create an S3 bucket to store the Terraform state file. You can create the bucket using the terminal by running the following command:
 
 ```bash
 make bucket
@@ -226,43 +239,67 @@ bucket names must be used. see <a href=" https://docs.aws.amazon.com/AmazonS3/la
 ## Automatic Invocation
 
 ### Step 1
-The command 
+Run the command 
 
 
 
 ```bash 
 make data
 ```
+In the terminal.
 
-Will use the tool provided `GDPR/src/data/create_data.py` to create a .csv file named `dummy_data_large.csv` in `GDPR/src/data`.
+This will use the tool provided `GDPR/src/data/create_data.py` to create a .csv file named `dummy_data_large.csv` in `GDPR/src/data` which contains over 1MB of fake user data.
 
 ### Step 2
-It is now essential that you push to github which will trigger actions and create the necessary infrastructure.
-================================================================
+It is now essential that you push to github which will trigger actions and create the necessary infrastructure. check your github actions tab (in your forked GDPR repo on the github website) to make sure the pipeline is complete before proceeding further, you should see a green tick next to the workflow run which is named the same as the commit message from the push.
+
+You will now have 4 buckets in total in your AWS account which can be viewed in the AWS console by searching in the top left for `S3`, 
+after clicking on `S3` you should be able to see the buckets, 1 with the name which you entered when you ran the `make bucket` command and 3 others which have been made
+automatically, the 3 others are prefixed with the titles gdpr-input-, gdpr-invocation- and gdpr-processed- referred to from now on as input bucket, invocation bucket and processed bucket respectively.
+The numbers after the titles are time/date stamps to ensure that they are unique names.
+The user does not need to worry about naming conventions, this is done automatically.
+
+----------------------------------------------------------------
 
 ### Step 3
 run the command 
 ```bash 
 make upload
 ``` 
-To automatically upload your `dummy_data_large.csv` file to the correct bucket.
+In the terminal.
+
+This automatically uploads a time/date stamped version of `dummy_data_large.csv` file to the input bucket within the AWS system.
 ### step 4
 To invoke the function run the command 
 ```bash 
 make invoke
 ```
+In the terminal.
+This creates a .json file (containing the bucket name, file to obfuscate and which fields to obfuscate), uploads it to the invocation bucket
+ and invokes the lambda function on the AWS system.
+
+The PII fields get obfuscated and a new time/date stamped file is generated and uploaded to the processed bucket on the AWS system.
+
+All other files are removed from the other buckets and you will be left with just the time/date stamped obfuscated file(s) in the processed bucket.
+
+You can now download the obfuscated file from the bucket and view the results.
+
+--------------------------------
+
 the default PII fields to be obfuscated 
 are `["Name", "Email Address", "Sex", "DOB"]` 
    -  these can be changed in **line 6** of `create_json_payload.py` in `GDPR/src/utils`
 
-If the PII fields are changed you must again push to github to update the lambda function.
+If the PII fields are changed you must push to github again to update the lambda function.
 ## Manual Invocation
 
-Alternatively you can use your own `.csv` file using the same format as the `Example Input CSV file` (as seen at start of this readme) and upload it manually to the `input` bucket (which was created automatically when `dummy_data_large.csv` was pushed to github) on the aws website or via the AWS CLI.
+Alternatively you can use your own `.csv` file using the same format as the `Example Input CSV file` (as seen at start of this readme) and upload it manually to the `input` bucket on the aws website or via the AWS CLI.
 
 Once this is done you can invoke the lambda function by uploading a `.json` file to the `invocation` bucket in the format mentioned above in the `Example input` (as seen at start of this readme).
 
-## Viewing result
+Make sure the file name, bucket name and PII fields are correct as this is case sensitive.
+
+## Viewing results
 
    -  Go to AWS website
 
@@ -277,3 +314,13 @@ all data in the `input` and `invocation` buckets will be erased.
 
 To run the lambda successfully there must be no data in the `input` and `invocation` buckets before any data is added either manually or automatically with use of the tools.
 
+There are also detailed log messages which can be viewed on the AWS website, search for `cloudwatch`, select it and then click log groups on the left, once here you will see a log group
+named `/aws/lambda/my_lambda_function` click on that and then in there you will see a date stamped log file which can be viewed within the browser if you so wish.
+
+----------------------------------------------------------------
+
+# Future enhancements
+
+   -  Support for other input file formats such as json and parquet
+   -  convert to library format
+   -  Make project compatible with EC2 and ECS systems
