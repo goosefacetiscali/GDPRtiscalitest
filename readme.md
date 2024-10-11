@@ -190,35 +190,29 @@ Once these secrets are set up, your GitHub Actions workflows will have the neces
 
 ### Creating an S3 Bucket for Terraform State Storage
 
-Before running Terraform, you need to create an S3 bucket to store the Terraform state. You can create the bucket using AWS CLI by running the following command:
+Before running Terraform, you need to create an S3 bucket to store the Terraform state. You can create the bucket using the terminal by running the following command:
 
 ```bash
-aws s3 mb s3://tf-state-gdpr-obfuscator-test
+make bucket
 ```
+You will be asked to input a unique bucket name in the terminal.
+
 If you get error during bucket creation it may be because that bucket name is taken by another user, unique 
-bucket names must be used.
+bucket names must be used. see <a href=" https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html" target="_blank">here</a> for more information.
 
 **Note**:  
 - Ensure you have the correct permissions to create S3 buckets in your AWS account.  
 - This bucket will be used exclusively to store the Terraform state.
 
-This can also be done manually on the AWS website.
-
-## Code that must be changed
-
-Once the bucket is created, ensure that the unique bucket name, (eg. `tf-state-gdpr-obfuscator-test`) is added   
-- to **line 10** of the file `terraform/data.tf` 
-
--  and to **line 13** of the file `src/utils/processing2.py`
-
 ## Automatic Invocation
-
-
-Use the tool provided `GDPR/src/data/create_data.py` to create a .csv file named `dummy_data_large.csv` in `GDPR/src/data` by running the following command 
+The command 
 
 ```bash 
 make data
 ```
+
+Will use the tool provided `GDPR/src/data/create_data.py` to create a .csv file named `dummy_data_large.csv` in `GDPR/src/data`.
+
 
 it is now essential that you push to github which will trigger actions and create the necessary infrastructure.
 

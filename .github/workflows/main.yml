@@ -78,7 +78,7 @@
         
 #       - name: Terraform Init
 #         working-directory: terraform
-#         run: terraform init
+#         run: terraform init 
 
 #       - name: Terraform Apply for Specific Buckets
 #         working-directory: terraform

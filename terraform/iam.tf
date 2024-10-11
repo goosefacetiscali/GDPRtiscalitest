@@ -34,7 +34,7 @@ resource "aws_iam_policy" "lambda_s3_policy" {
           "logs:*"
         ],
         Resource = [
-          "arn:aws:s3:::tf-state-gdpr-obfuscator/tf-state",
+          "arn:aws:s3:::${var.bucket}/terraform.tfstate",
           "arn:aws:s3:::${data.terraform_remote_state.gdpr_state.outputs.gdpr_input_bucket}",              
           "arn:aws:s3:::${data.terraform_remote_state.gdpr_state.outputs.gdpr_input_bucket}/*",  
           "arn:aws:s3:::${data.terraform_remote_state.gdpr_state.outputs.gdpr_processed_bucket}",              

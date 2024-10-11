@@ -10,8 +10,18 @@ logger.setLevel(logging.INFO)
 
 s3 = boto3.client("s3")
 
-tf_state_bucket = "tf-state-gdpr-obfuscator"
-tf_state_key = "tf-state"
+
+def get_bucket_name():
+    # Open and load the shared variable (bucket_name) from the JSON file
+    with open('src/utils/shared_variables.json', 'r') as f:
+        shared_vars = json.load(f)
+    
+    # Extract the bucket name
+    bucket = shared_vars.get('bucket')
+    return bucket
+
+tf_state_bucket = get_bucket_name()
+tf_state_key = "terraform.tfstate"
 
 
 def get_bucket_names_from_tf_state(bucket_name, object_key):
