@@ -69,7 +69,8 @@ check-coverage:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} coverage run --omit 'myenv/*' -m pytest -vvv && coverage report -m)
 
 ############################################################################################################
-
+bucket:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} python src/data/shared_variables.py)
 ## create dummy data file
 data:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} python src/data/create_data.py)

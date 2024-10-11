@@ -14,26 +14,6 @@ data "terraform_remote_state" "gdpr_state" {
 }
 
 
-# data "archive_file" "upload_zip" {
-#   type        = "zip"
-#   source_file = [
-#     "${path.module}/../src/utils/processing2.py",
-#     "${path.module}/../src/utils/shared_variables.json"
-#   ]
-#   output_path = "${path.module}/../upload.zip"
-# }
-# data "archive_file" "processing2_zip" {
-#   type        = "zip"
-#   source_file = "${path.module}/../src/utils/processing2.py"
-#   output_path = "${path.module}/../processing2.zip"
-# }
-
-# data "archive_file" "shared_variables_zip" {
-#   type        = "zip"
-#   source_file = "${path.module}/../src/utils/shared_variables.json"
-#   output_path = "${path.module}/../shared_variables.zip"
-# }
-
 resource "null_resource" "combine_zips" {
   provisioner "local-exec" {
 command = <<EOT

@@ -137,25 +137,41 @@ run `make requirements` in the terminal.
 
 
 ## Setting up AWS CLI
+### Step 1
+Run command 
+```bash
+aws --version
+```
+in the terminal to see if you already have AWS CLI installed. you should see something like this `aws-cli/2.15.8 Python/3.11.6 Linux/5.15.153.1-microsoft-standard-WSL2 exe/x86_64.ubuntu.22 prompt/off` in the terminal if you have it installed already.
 
-Follow the instructions <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">here</a> to install the AWS CLI.
+If not follow the instructions <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">here</a> to install the AWS CLI.
 
-## logging in to AWS using the CLI
 
-Run the command `aws configure` 
+### Step 2
+### logging in to AWS using the CLI
 
-You will be prompted to enter your `AWS Access Key ID` which can be found in the security credentials 
+Run the command 
+```bash
+aws configure
+``` 
+in the terminal.
+
+   -  Go to the AWS website 
+
+You will have been prompted in the terminal to enter your `AWS Access Key ID` which can be found in the security credentials 
 section of the AWS website under your username in the top right. 
 
 Select `Create Access Key` to create one and follow the instructions which follow.
 
 Click `Download .csv file` open it so you can view the ID and Key and save it locally to your PC, being sure
-to follow `Access key best practices`.
+to follow `Access key best practices` which are displayed on the page.
 
-enter the information from the downloaded .csv file `rootkey.csv` into the terminal following the prompts.
+### Step 3
+enter the information from the downloaded .csv file (`rootkey.csv`) into the terminal following the prompts.
 
-the next 2 prompts should be `eu-west-2` for the `Default Region Name` and `json` for the 
-`Default output format`
+the next 2 prompts should be -
+   - `eu-west-2` for the `Default Region Name` 
+   - `json` for the `Default output format`
 
 
 ## Setting Up AWS Access Keys in GitHub
@@ -173,17 +189,20 @@ To enable the project to interact with AWS services, you need to configure AWS a
    - On the left sidebar, click on `Secrets and variables`.
    - Then click on `Actions` to manage secrets for GitHub Actions.
 
-4. **Add New Repository Secret:**
+4. **Add 2 New Repository Secrets:**
    - Click on the `New repository secret` button.
 
 5. **Enter the Secrets:**
+  
+----------------------------------------------------------------
    - In the `Name` field, enter `AWS_ACCESS_KEY`.
    - In the `Value` field, paste your Access Key ID from the `rootkey.csv` made earlier.
    - Click on `Add secret`.
+----------------------------------------------------------------
    - Repeat the process to create another secret:
-     - In the `Name` field, enter `AWS_SECRET`.
-     - In the `Value` field, paste your Secret Access Key from the `rootkey.csv` made earlier.
-     - Click on `Add secret`.
+   - In the `Name` field, enter `AWS_SECRET`.
+   - In the `Value` field, paste your Secret Access Key from the `rootkey.csv` made earlier.
+   - Click on `Add secret`.
 
 Once these secrets are set up, your GitHub Actions workflows will have the necessary permissions to access AWS resources securely.
 
@@ -205,7 +224,11 @@ bucket names must be used. see <a href=" https://docs.aws.amazon.com/AmazonS3/la
 - This bucket will be used exclusively to store the Terraform state.
 
 ## Automatic Invocation
+
+### Step 1
 The command 
+
+
 
 ```bash 
 make data
@@ -213,16 +236,18 @@ make data
 
 Will use the tool provided `GDPR/src/data/create_data.py` to create a .csv file named `dummy_data_large.csv` in `GDPR/src/data`.
 
+### Step 2
+It is now essential that you push to github which will trigger actions and create the necessary infrastructure.
+================================================================
 
-it is now essential that you push to github which will trigger actions and create the necessary infrastructure.
-
+### Step 3
 run the command 
 ```bash 
 make upload
 ``` 
-to upload your `dummy_data_large.csv` file to the correct bucket
-
-to invoke the function run the command 
+To automatically upload your `dummy_data_large.csv` file to the correct bucket.
+### step 4
+To invoke the function run the command 
 ```bash 
 make invoke
 ```
@@ -230,6 +255,7 @@ the default PII fields to be obfuscated
 are `["Name", "Email Address", "Sex", "DOB"]` 
    -  these can be changed in **line 6** of `create_json_payload.py` in `GDPR/src/utils`
 
+If the PII fields are changed you must again push to github to update the lambda function.
 ## Manual Invocation
 
 Alternatively you can use your own `.csv` file using the same format as the `Example Input CSV file` (as seen at start of this readme) and upload it manually to the `input` bucket (which was created automatically when `dummy_data_large.csv` was pushed to github) on the aws website or via the AWS CLI.
@@ -238,10 +264,14 @@ Once this is done you can invoke the lambda function by uploading a `.json` file
 
 ## Viewing result
 
-there will now be a file in the `processed` bucket with the same filename as the original file uploaded to the `input` bucket with the selected PII fields data replaced with `***`.
+   -  Go to AWS website
+
+there will now be a file in the `processed` bucket on the AWS website with the same filename as the original file uploaded to the `input` bucket with the selected PII fields data replaced with `***`.
 
    -  The `***` can be replaced with any characters on 
-   -  **line 87** of the file `src/utils/processing2.py`
+   -  **line 97** of the file `src/utils/processing2.py`
+
+If the `***` is changed you must again push to github to update the lambda function.
 
 all data in the `input` and `invocation` buckets will be erased.
 

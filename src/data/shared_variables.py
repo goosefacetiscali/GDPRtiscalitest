@@ -9,14 +9,6 @@ shared_variables = {}
 bucket_name = input("Please enter the bucket name: ")
 shared_variables["bucket"] = bucket_name
 
-# Ask user for GitHub username
-github_username = input("Please enter your GitHub username: ")
-shared_variables["github_username"] = github_username
-
-# Ask user for commit message
-commit_message = input("Please enter the commit message: ")
-shared_variables["commit_message"] = commit_message
-
 def export_to_json():
     json_path = os.path.join('src', 'utils', 'shared_variables.json')
     
@@ -76,4 +68,6 @@ terraform {{
 
 if __name__ == "__main__":
     export_to_json()
-
+    export_to_tfvars()
+    create_s3_bucket(shared_variables["bucket"])
+    create_provider_config(shared_variables["bucket"])
