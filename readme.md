@@ -269,7 +269,7 @@ make upload
 In the terminal.
 
 This automatically uploads a time/date stamped version of `dummy_data_large.csv` file to the input bucket within the AWS system.
-### step 4
+### Step 4
 To invoke the function run the command 
 ```bash 
 make invoke
@@ -319,8 +319,32 @@ named `/aws/lambda/my_lambda_function` click on that and then in there you will 
 
 ----------------------------------------------------------------
 
+
+## Cleaning up your AWS console automatically
+
+It is important that the following is done in the correct order.
+
+### Step 1:
+
+Go into the git hub actions menu, on the github website, this is where you can see the workflows that have been ran, on the left hand side you should see a work flow called `Destroy Infrastructure GDPR` you should click on this to open a `workflow runs` menu and to the right of `This workflow has a workflow_dispatch event trigger.` there is a drop down box, if you click on that and press the green `Run workflow` button you will destroy all the resources which were required for this project but leaving your existing AWS resources in place.
+
+### Step 2:
+
+The bucket that was created when 
+```bash
+make bucket
+```
+which was used to store a terraform state file can now be deleted along with its contents. I suggest that this be done in the AWS console on the website.
+
+----------------------------------------------------------------
+
+Now your AWS account is back to how it was before this project was created.
+
+
+
 # Future enhancements
 
    -  Support for other input file formats such as json and parquet
    -  convert to library format
    -  Make project compatible with EC2 and ECS systems
+   
