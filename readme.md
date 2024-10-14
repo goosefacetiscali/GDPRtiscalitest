@@ -213,11 +213,14 @@ To enable the project to interact with AWS services, you need to configure AWS a
    - Click on `Add secret`.
 ----------------------------------------------------------------
    - Repeat the process to create another secret:
+   - Click on the `New repository secret` button.
    - In the `Name` field, enter `AWS_SECRET`.
    - In the `Value` field, paste your Secret Access Key from the `rootkey.csv` made earlier.
    - Click on `Add secret`.
 
 Once these secrets are set up, your GitHub Actions workflows will have the necessary permissions to access AWS resources securely.
+
+6. You must now enable workflows for the GDPR repository, to do this you should click the actions tab at the top of the page, here you will see a green box which you must click to enable workflows.
 
 
 ### Creating an S3 Bucket for Terraform State Storage
@@ -231,6 +234,13 @@ You will be asked to input a unique bucket name in the terminal.
 
 If you get error during bucket creation it may be because that bucket name is taken by another user, unique 
 bucket names must be used. see <a href=" https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html" target="_blank">here</a> for more information.
+
+I suggest a simple bucket name such as `gdprtestbucketoctober`, `gdprtestbucket` or `gdproctober` without spaces and all in lower case.
+
+run `make bucket` again if you get an error.
+
+You must get the message in the terminal `Bucket '....' created successfully.`
+where `....` is the bucket name you have chosen before continuing. 
 
 **Note**:  
 - Ensure you have the correct permissions to create S3 buckets in your AWS account.  
@@ -251,7 +261,8 @@ In the terminal.
 This will use the tool provided `GDPR/src/data/create_data.py` to create a .csv file named `dummy_data_large.csv` in `GDPR/src/data` which contains over 1MB of fake user data.
 
 ### Step 2
-It is now essential that you push to github which will trigger actions and create the necessary infrastructure. check your github actions tab (in your forked GDPR repo on the github website) to make sure the pipeline is complete before proceeding further, you should see a green tick next to the workflow run which is named the same as the commit message from the push.
+It is now essential that you push to github which will trigger actions and create the necessary infrastructure. check your github actions tab (in your forked GDPR repo on the github website). 
+Make sure the pipeline is complete before proceeding further, you should see a green tick next to the workflow run which is named the same as the commit message from the push.
 
 You will now have 4 buckets in total in your AWS account which can be viewed in the AWS console by searching in the top left for `S3`, 
 after clicking on `S3` you should be able to see the buckets, 1 with the name which you entered when you ran the `make bucket` command and 3 others which have been made
@@ -335,7 +346,7 @@ The bucket that was created when
 ```bash
 make bucket
 ```
-which was used to store a terraform state file can now be deleted along with its contents. I suggest that this be done in the AWS console on the website.
+was ran earlier, which was used to store a terraform state file, can now be deleted along with its contents. I suggest that this be done in the AWS console on the website.
 
 ----------------------------------------------------------------
 
