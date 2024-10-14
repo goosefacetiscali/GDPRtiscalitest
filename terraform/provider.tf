@@ -12,7 +12,7 @@ terraform {
     }
 
     backend "s3" {
-      bucket = "gdprgoosetest"
+      bucket = "gdprbuckettfstate"
       key    = "terraform.tfstate"
       region = "eu-west-2"
     }

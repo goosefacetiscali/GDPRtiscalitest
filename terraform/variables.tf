@@ -1,4 +1,4 @@
 variable bucket {
-    default = "gdprgoosetest"
+    default = "gdprbuckettfstate"
 }
 
