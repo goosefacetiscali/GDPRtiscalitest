@@ -1,1 +1,0 @@
-{"bucket_name": "gdpr-input-20241011032239267400000001", "s3_file_path": "2024_11_10_04:23:44_dummy_data_large.csv", "pii_fields": ["Name", "Email Address", "Sex", "DOB"]}
