@@ -288,9 +288,10 @@ You can now download the obfuscated file from the bucket and view the results.
 
 the default PII fields to be obfuscated 
 are `["Name", "Email Address", "Sex", "DOB"]` 
-   -  these can be changed in **line 6** of `create_json_payload.py` in `GDPR/src/utils`
+   -  these can be changed in **line 6** of `create_json_payload.py` in `GDPR/src/utils`, the fields are case sensitive and must match existing fields in the `dummy_data_large.csv` file.
 
-If the PII fields are changed you must push to github again to update the lambda function.
+
+If the PII fields are changed run `make data` (to make another csv file), `make upload` (to put it in the correct bucket) and `make invoke` (to make the json file with updated PII fields and trigger the lambda) in that order
 ## Manual Invocation
 
 Alternatively you can use your own `.csv` file using the same format as the `Example Input CSV file` (as seen at start of this readme) and upload it manually to the `input` bucket on the aws website or via the AWS CLI.
@@ -310,11 +311,11 @@ there will now be a file in the `processed` bucket on the AWS website with the s
 
 If the `***` is changed you must again push to github to update the lambda function.
 
-all data in the `input` and `invocation` buckets will be erased.
+all data in the `input` and `invocation` buckets will be erased once a .json file is uploaded to the invocation bucket.
 
 To run the lambda successfully there must be no data in the `input` and `invocation` buckets before any data is added either manually or automatically with use of the tools.
 
-There are also detailed log messages which can be viewed on the AWS website, search for `cloudwatch`, select it and then click log groups on the left, once here you will see a log group
+There are also detailed log messages which can be viewed on the AWS website, at the top of the console use the search tool for the word `cloudwatch`, select it and then click log groups on the left, once here you will see a log group
 named `/aws/lambda/my_lambda_function` click on that and then in there you will see a date stamped log file which can be viewed within the browser if you so wish.
 
 ----------------------------------------------------------------
