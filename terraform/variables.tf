@@ -1,4 +1,4 @@
 variable bucket {
-    default = ""
+    default = "gdproctober"
 }
 

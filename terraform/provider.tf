@@ -12,7 +12,7 @@ terraform {
     }
 
     backend "s3" {
-      bucket = ""
+      bucket = "gdproctober"
       key    = "terraform.tfstate"
       region = "eu-west-2"
     }
